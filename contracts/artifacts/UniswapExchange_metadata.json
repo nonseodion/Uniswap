@@ -36,6 +36,31 @@
 					{
 						"indexed": true,
 						"internalType": "address",
+						"name": "buyer",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "ethSold",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "tokensBought",
+						"type": "uint256"
+					}
+				],
+				"name": "TokenPurchase",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
 						"name": "from",
 						"type": "address"
 					},
@@ -163,6 +188,111 @@
 				"inputs": [
 					{
 						"internalType": "uint256",
+						"name": "ethSold",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "minTokens",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "deadline",
+						"type": "uint256"
+					}
+				],
+				"name": "ethToTokenSwapInput",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokensBought",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxEth",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "deadline",
+						"type": "uint256"
+					}
+				],
+				"name": "ethToTokenSwapOutput",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "ethSold",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "minTokens",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "deadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "receiver",
+						"type": "address"
+					}
+				],
+				"name": "ethToTokenTransferInput",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "factory",
+				"outputs": [
+					{
+						"internalType": "contract UniswapFactory",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
 						"name": "inputAmount",
 						"type": "uint256"
 					},
@@ -255,7 +385,13 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "contract IERC20",
+						"name": "_token",
+						"type": "address"
+					}
+				],
 				"name": "setup",
 				"outputs": [],
 				"stateMutability": "nonpayable",
@@ -442,10 +578,19 @@
 			]
 		},
 		"contracts/exchange.sol": {
-			"keccak256": "0xb04b5b933274a2aedc5c3cff541a5d599786158f6974ed2cd392237a9930c9ac",
+			"keccak256": "0xcfeb9801dfb78897b6a0d4f292a3bf3cb704c18676195ecee3b07c7dd716492f",
+			"license": "MIT",
 			"urls": [
-				"bzz-raw://ed2069a04609cda953503e8f99c834f6bf3a7b3df91f400afb0cddf021194fde",
-				"dweb:/ipfs/QmUV7z55SeeupxzUHz4PpUchX7cpAMV3h2dBuP6pC75agV"
+				"bzz-raw://79dfa144739a810b323b988b5797f095679cd324bb7a4dc038dde0942dc5e806",
+				"dweb:/ipfs/QmaovBC1oq53rwrWyqg87Gax41cQDMskUQ3N1vy7h62HNy"
+			]
+		},
+		"contracts/factory.sol": {
+			"keccak256": "0x9acafb682fae9b30bd07e6b615b903d2a2c473f5d5967afcc58f16e92ee2c037",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://81d8d70a39eb91aeabd8691000db666a61ad8d2854fd8a7efe7eb20d76d5fbe3",
+				"dweb:/ipfs/QmbZaM23vsBzdcQNUfrct2muFpKSkS5oUW6ygmSSAGaQ81"
 			]
 		}
 	},
