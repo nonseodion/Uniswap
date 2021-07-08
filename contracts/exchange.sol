@@ -9,6 +9,7 @@ contract UniswapExchange is UNI{
     }
     
     function getInputPrice(uint inputAmount, uint inputReserve, uint outputReserve) public pure returns(uint){
+        require(inputAmount > 0 && inputReserve > 0 && outputReserve > 0, "UniswapExchange: Invalid getInputPrice param(s)");
         uint inputAmount_withFee = inputAmount * 997;
         uint numerator = inputAmount_withFee * outputReserve;
         uint denominator = (1000 * inputReserve) + inputAmount_withFee;
@@ -16,8 +17,9 @@ contract UniswapExchange is UNI{
     }
     
     function getOutputPrice(uint outputAmount, uint outputReserve, uint inputReserve) public pure returns(uint){
+        require(outputAmount > 0 && inputReserve > 0 && outputReserve > 0, "UniswapExchange: Invalid getOutputPrice param(s)");
         uint numerator = 1000 * inputReserve * outputAmount;
-        uint denominator = 997 * outputReserve * outputAmount;
-        return numerator / denominator;
+        uint denominator = 997 * (outputReserve - outputAmount);
+        return (numerator / denominator) + 1;
     }
 }
