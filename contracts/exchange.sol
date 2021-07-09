@@ -12,6 +12,7 @@ contract UniswapExchange is UNI{
     
     //Events
     event TokenPurchase(address indexed buyer, uint indexed ethSold, uint indexed tokensBought);
+    event EthPurchase(address indexed buyer, uint indexed tokensSold, uint indexed ethBought);
     
     function setup(IERC20 _token) external{
         require(address(token) == address(0) && address(factory) == address(0));
@@ -19,6 +20,7 @@ contract UniswapExchange is UNI{
         token = _token;
     }
     
+    //Ethereum to Tokens
     function getInputPrice(uint inputAmount, uint inputReserve, uint outputReserve) public pure returns(uint){
         require(inputAmount > 0 && inputReserve > 0 && outputReserve > 0, "UniswapExchange: Invalid getInputPrice param(s)");
         uint inputAmount_withFee = inputAmount * 997;
@@ -80,4 +82,63 @@ contract UniswapExchange is UNI{
     function ethToTokenSwapOutput(uint tokensBought, uint maxEth, uint deadline) public payable returns(uint){
         return ethToTokenOutput(tokensBought, maxEth, deadline, msg.sender);
     }
+    
+    function ethToTokenTransferOutput(uint tokensBought, uint maxEth, uint deadline, address receiver) public payable returns(uint){
+        require(receiver != address(this) && receiver != address(0));
+        return ethToTokenOutput(tokensBought, maxEth, deadline, receiver);
+    }
+    
+    
+    //Tokens to Ethereum
+    function tokenToEthInput(uint tokensSold, uint minEth, uint deadline, address receiver)public returns(uint){
+        require(tokensSold > 0 && minEth > 0, "UniswapExchange: Invalid Input");
+        require(deadline >= block.timestamp, "UniswapExchange: Deadline passed");
+        
+        uint tokenReserve = token.balanceOf(address(this));
+        uint ethBought = getInputPrice(tokensSold, tokenReserve, address(this).balance);
+        require(ethBought >= minEth, "UniswapExchange: Not enough Eth bought");
+        
+        require(token.transferFrom(msg.sender, address(this), tokensSold));
+        (bool success,) = receiver.call{value: ethBought}("");
+        require(success);
+        
+        emit EthPurchase(msg.sender, tokensSold, ethBought);
+        return ethBought;
+    }
+    
+    function tokenToEthInputSwap(uint tokensSold, uint minEth, uint deadline) public returns(uint){
+        return tokenToEthInput(tokensSold, minEth, deadline, msg.sender);
+    }
+    
+    function tokenToEthInputTransfer(uint tokensSold, uint minEth, uint deadline, address receiver) public returns(uint){
+        require(receiver != address(this) && receiver != address(0));
+        return tokenToEthInput(tokensSold, minEth, deadline, receiver);
+    }
+    
+    function tokenToEthOutput(uint ethBought, uint maxTokens, uint deadline, address receiver) public returns(uint){
+        require(ethBought > 0 && maxTokens > 0, "UniswapExchange: Invalid Input");
+        require(deadline >= block.timestamp, "UniswapExchange: Deadline passed");
+        
+        uint tokenReserve = token.balanceOf(address(this));
+        uint tokensSold = getOutputPrice(ethBought, address(this).balance, tokenReserve);
+        require(tokensSold <= maxTokens, "UniswapExchange: Too much tokens sold");
+        
+        require(token.transferFrom(msg.sender, address(this), tokensSold));
+        (bool success,) = receiver.call{value: ethBought}("");
+        require(success);
+        
+        emit EthPurchase(msg.sender, tokensSold, ethBought);
+        return tokensSold;
+    }
+    
+    function tokenToEthOutputSwap(uint ethSold, uint maxTokens, uint deadline) public returns(uint){
+        return tokenToEthOutput(ethSold, maxTokens, deadline, msg.sender);
+    }
+    
+    function tokenToEthOutputTransfer(uint ethSold, uint maxTokens, uint deadline, address receiver) public returns(uint){
+        require(receiver != address(this) && receiver != address(0));
+        return tokenToEthOutput(ethSold, maxTokens, deadline, receiver);
+    }
+    
+    
 }
